@@ -10,7 +10,7 @@ Before installing Kubernetes, ensure that you have the following prerequisites:
 - Access to the internet
 - Administrative privileges (sudo)
 - Range of IP address for service (192.5.0.0/16*)
-\*tested on
+*tested on
 
 ### Installation Steps
 
