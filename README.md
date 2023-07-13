@@ -9,6 +9,8 @@ Before installing Kubernetes, ensure that you have the following prerequisites:
 - Ubuntu operating system (Ubuntu 22.04*)
 - Access to the internet
 - Administrative privileges (sudo)
+- Range of IP address for service (192.5.0.0/16*)
+\*tested on
 
 ### Installation Steps
 
