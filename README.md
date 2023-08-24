@@ -46,8 +46,8 @@ Follow these steps to install the CRI-DOCKERD container runtime:
 git clone https://github.com/Mirantis/cri-dockerd.git
 
 # Install Go
-wget https://go.dev/dl/go1.20.6.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.20.6.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 go version
 
@@ -152,10 +152,10 @@ ls -dl /nfskubernetes
 sudo chown nobody:nogroup /nfskubernetes
 sudo nano /etc/exports
 # Add the following line to /etc/exports:
-# /nfskubernetes 192.168.1.159(rw,sync,no_subtree_check,no_root_squash)
+# /nfskubernetes 192.168.1.75(rw,sync,no_subtree_check,no_root_squash)
 
 sudo systemctl restart nfs-kernel-server
-sudo ufw allow from 192.168.1.159 to any port nfs
+sudo ufw allow from 192.168.1.75 to any port nfs
 
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 sudo apt-get install apt-transport-https --yes
