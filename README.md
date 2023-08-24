@@ -185,6 +185,34 @@ Explanation:
 
 Congratulations! You have successfully installed Kubernetes on your system.
 
+#### 6. Installing Metallb
+
+Set up MetalLB:
+```shell
+kubectl edit configmap -n kube-system kube-proxy
+# look for ipvs.strictARP: false, change to ipvs.strictARP: true
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml
+kubectl create -f metallb-pool.yaml
+kubectl create -f l2-adv-metallb.yaml
+```
+
+- If you’re using kube-proxy in IPVS mode, since Kubernetes v1.14.2 you have to enable strict ARP mode. you can achieve this by editing the kube-proxy config `kubectl edit configmap -n kube-system kube-proxy`
+- second line is command to apply the manifest
+- third line is to create metallb loadbalancer ip pool to use later in l2 configuration (edit `metallb-pool.yaml`) in the example, the pool is `192.168.1.54-192.168.1.58`
+- fourth line is to create L2 Configuration (edit `l2-adv-metallb.yaml`)
+
+#### 7. Installing GPU Operator
+
+To install NVIDIA GPU Operator, follow the steps below:
+```shell
+helm repo add nvidia https://helm.ngc.nvidia.com/nvidia && helm repo update
+helm install --wait --generate-name -n gpu-operator --create-namespace nvidia/gpu-operator
+```
+
+- first line is to add NVIDIA Helm repository
+- second line is to install the GPU Operator in `gpu-operator` namespace
+
+
 For more detailed information and further configurations, you can refer to the following references:
 
 - [Kubernetes Documentation](https://kubernetes.io/docs/setup/)
@@ -195,5 +223,7 @@ For more detailed information and further configurations, you can refer to the f
 - [NFS Subdir External Provisioner GitHub Repository](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner)
 - [Helm Installation Guide](https://helm.sh/docs/intro/install/)
 - [Calico Self-Managed On-Premises Guide](https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises)
+- [MetalLB Installation](https://metallb.universe.tf/installation/)
+- [NVIDIA GPU Operator Installation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html)
 
 Feel free to explore these resources for more information and configuration options.
