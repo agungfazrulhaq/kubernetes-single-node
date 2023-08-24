@@ -97,6 +97,7 @@ sudo apt update -y
 sudo apt -y install vim git curl wget kubelet=1.25.0-00 kubeadm=1.25.0-00 kubectl=1.25.0-00
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo kubeadm config images pull --cri-socket unix:///var/run/cri-dockerd.sock --kubernetes-version v1.25.0
+sudo kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock --kubernetes-version v1.25.0 --pod-network-cidr=10.215.0.0/16 --upload-certs --control-plane-endpoint=192.168.1.51
 export KUBECONFIG=/etc/kubernetes/admin.conf
 sudo chmod 644 /etc/kubernetes/admin.conf
 kubectl cluster-info
