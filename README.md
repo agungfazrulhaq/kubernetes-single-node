@@ -9,8 +9,11 @@ Before installing Kubernetes, ensure that you have the following prerequisites:
 - Ubuntu operating system (Ubuntu 22.04*)
 - Access to the internet
 - Administrative privileges (sudo)
-- Range of IP address for service (192.5.0.0/16*)
-*tested on
+- Range of IP address for POD (192.5.0.0/16*)
+- Node ip address (192.168.1.51 <192.168.1.0/24>)
+- Load Balancer IP Pool (192.168.1.54-192.168.1.58)
+
+<i>*used for this tutorial</i>
 
 ### Installation Steps
 
@@ -97,9 +100,10 @@ sudo apt update -y
 sudo apt -y install vim git curl wget kubelet=1.25.0-00 kubeadm=1.25.0-00 kubectl=1.25.0-00
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo kubeadm config images pull --cri-socket unix:///var/run/cri-dockerd.sock --kubernetes-version v1.25.0
-sudo kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock --kubernetes-version v1.25.0 --pod-network-cidr=10.215.0.0/16 --upload-certs --control-plane-endpoint=192.168.1.51
-export KUBECONFIG=/etc/kubernetes/admin.conf
-sudo chmod 644 /etc/kubernetes/admin.conf
+sudo kubeadm init --cri-socket unix:///var/run/cri-dockerd.sock --kubernetes-version v1.25.0 --pod-network-cidr=192.5.0.0/16 --upload-certs --control-plane-endpoint=192.168.1.51
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl cluster-info
 kubectl taint nodes master node-role.kubernetes.io/control-plane-
 apt-get install bash-completion
@@ -152,10 +156,10 @@ ls -dl /nfskubernetes
 sudo chown nobody:nogroup /nfskubernetes
 sudo nano /etc/exports
 # Add the following line to /etc/exports:
-# /nfskubernetes 192.168.1.75(rw,sync,no_subtree_check,no_root_squash)
+# /nfskubernetes 192.168.1.51(rw,sync,no_subtree_check,no_root_squash) <without the '#'>
 
 sudo systemctl restart nfs-kernel-server
-sudo ufw allow from 192.168.1.75 to any port nfs
+sudo ufw allow from 192.168.1.51 to any port nfs
 
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 sudo apt-get install apt-transport-https --yes
@@ -165,8 +169,8 @@ sudo apt-get install helm
 
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
-    --set nfs.server=x.x.x.x \
-    --set nfs.path=/exported/path
+    --set nfs.server=192.168.1.51 \
+    --set nfs.path=/nfskubernetes
 
 kubectl get sc
 kubectl patch storageclass nfs-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'

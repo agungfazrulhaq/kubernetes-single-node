@@ -9,5 +9,3 @@ spec:
   nodeSelectors:
   - matchLabels:
       kubernetes.io/hostname: kubemaster3
-  - matchLabels:
-      kubernetes.io/hostname: workergpu
